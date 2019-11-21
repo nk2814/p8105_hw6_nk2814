@@ -7,6 +7,8 @@ output: github_document
 
 ```{r setup, include=FALSE}
 library(tidyverse)
+library(modelr)
+
 knitr::opts_chunk$set(
 	echo = TRUE,
 	warning = FALSE,
@@ -27,6 +29,24 @@ theme_set(theme_minimal() + theme(legend.position = "bottom"))
 #### Problem 1 
 
 ```{r}
+
+# Import and clean birthweight data for regression analysis
+# outcome = bwt
+
+# Load and clean the data for regression analysis (i.e. convert numeric to factor where appropriate, check for missing data, etc.).
+
+
+birthweight =
+  read.csv("birthweight.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    babysex = as.factor(babysex),
+    frace = as.factor(frace),
+    malform = as.factor(malform),
+    mrace = as.factor(mrace),
+    bwt = bwt/453.592   
+  ) 
+
 
 ```
 
