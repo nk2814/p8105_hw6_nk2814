@@ -39,7 +39,7 @@ Import and clean birthweight data for regression analysis.
 # I converted bwt to lbs from grams, and also created a binary variable indicating whether the mother smoked at least 1 cigarette per day during pregnancy
 
 birthweight =
-  read.csv("birthweight.csv") %>% 
+  read.csv("./data/birthweight.csv") %>% 
   janitor::clean_names() %>% 
   mutate(
     id = 1:4342,
@@ -73,7 +73,7 @@ fit1
 ```
 
 
-Linear model 'fit1' is highly significant with one predictor. However, I have good reason to think that more variables than just pre-pregnancy maternal weight (ppwt) affect birthweight. 
+Linear model 'fit1' is significant with one predictor. However, I have good reason to think that more variables than just pre-pregnancy maternal weight (ppwt) affect birthweight. 
 
 In addition to biological variables, there are known associations between maternal race and birth outcomes in the United States. Thus, I proceed to fit maternal race into the model, along with baby's sex.
 
@@ -152,7 +152,7 @@ fit6
 ```
 
 
-I could keep testing variables, but at this point, I am satisfied with my somewhat parsimonious main effects model. My final regression model (**fit6**) is thus as follows:
+I could keep testing variables, but at this point, I am satisfied with my somewhat parsimonious main effects model. My **final regression model** (**fit6**) is thus as follows:
 
 **estimated birthweight = 5.25 + 0.01(ppwt) - 0.16(babysex2) -0.69(mrace2) - 0.03(mrace3) - 0.32(mrace4) + 0.03(wtgain)**
 
@@ -274,7 +274,7 @@ boot_sample = function(df) {
 
 ```
 
-Generate 5000 bootstrap samples and, for each bootstrap sample, produce estimates of r^2 and log(B0*B1) and plot their distributions.
+Generate 5000 bootstrap samples.
 
 ```{r}
 
@@ -347,14 +347,36 @@ bootstrap_results2 =
 ggplot(bootstrap_results2, aes(x=log))+geom_density() + labs(x="Log (Bo*B1)")
 ```
 
+
+
 Using the 5000 bootstrap estimates, identify the 2.5% and 97.5% quantiles to provide a 95% confidence interval for r^2 and log(β^0∗β^1). 
 
 ```{r}
 
 # R-squared 95% Confidence Interval
 
+bootstrap_results %>% 
+  pull(r.squared) %>% 
+  as.vector() %>% 
+  quantile(probs=c(0.025, 0.975))
+
+
+```
+
+The 95% confidence interval for r-squared across the 5,000 bootstrap samples is **`r quantile(as.vector(pull(bootstrap_results, r.squared)), probs = c(0.025, 0.975)) `**. 
+
+```{r}
 
  # log(β^0∗β^1) 95% Confidence Interval
 
+bootstrap_results2 %>% 
+  pull(log) %>% 
+  as.vector() %>% 
+  quantile(probs=c(0.025, 0.975))
 ```
+
+
+The 95% confidence interval for log(β^0∗β^1) across the 5,000 bootstrap samples is **`r quantile(as.vector(pull(bootstrap_results2, log)), probs = c(0.025, 0.975)) `**. 
+
+
 
